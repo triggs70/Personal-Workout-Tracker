@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Workout Log</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1>Log Workout</h1>
+        <form id="workout-form">
+            <label for="workout-day">Workout Day:</label>
+            <input type="text" id="workout-day" name="workout-day" required />
+            <div id="exercises-container"></div>
+            <button type="button" id="add-exercise">+ Add Exercise</button>
+            <button type="submit">Log Workout</button>
+        </form>
+        <hr>
+        <h2>Progress Tracker</h2>
+        <div id="progress-section">
+            <label for="exercise-search">Exercise Name</label>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
