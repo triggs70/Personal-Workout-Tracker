@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Workout Log</title>
         <link rel="stylesheet" href="style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
         <h1>Log Workout</h1>
@@ -15,10 +16,16 @@
             <button type="button" id="add-exercise">+ Add Exercise</button>
             <button type="submit">Log Workout</button>
         </form>
+        <datalist id="exercise-list"></datalist>
         <hr>
         <h2>Progress Tracker</h2>
         <div id="progress-section">
-            <label for="exercise-search">Exercise Name</label>
+            <label for="exercise-search">Exercise Name:</label>
+            <select id="exercise-search">
+                <option value="" disabled selected>Select an exercise</option>
+            </select>
+            <button type="button" id="fetch-progress">Show Progress</button>
+            <canvas id="progress-chart" width="600" height="300"></canvas>
         </div>
         <script src="script.js"></script>
     </body>

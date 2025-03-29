@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import add_workout, get_workouts, get_progress, update_workout_db, delete_workout_db
+from database import connect, add_workout, get_workouts, get_progress, update_workout_db, delete_workout_db
 
 app = Flask(__name__)
 CORS(app)
@@ -59,6 +59,15 @@ def fetch_progress(exercise_name):
         return jsonify(progress), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/exercises", methods=["GET"])
+def get_exercise_names():
+    conn = connect()
+    cursor=conn.cursor()
+    cursor.execute("SELECT DISTINCT exercise_name FROM exercises ORDER BY exercise_name ASC")
+    result = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(result)
 
 if __name__=="__main__":
     app.run(debug=True)
