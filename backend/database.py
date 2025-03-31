@@ -63,6 +63,7 @@ def get_workouts():
         workout_id = row["workout_id"]
         if workout_id not in workouts:
             workouts[workout_id] = {
+                "id": workout_id,
                 "workout_day": row["workout_day"],
                 "date": row["date"],
                 "exercises": {}
