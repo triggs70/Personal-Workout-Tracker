@@ -1,6 +1,7 @@
 const exercisesCont = document.getElementById("exercises-container");
 const addExerciseBtn = document.getElementById("add-exercise");
 const workoutForm = document.getElementById("workout-form");
+const cancelEdit = document.getElementById("cancel-edit");
 let editingWorkoutId = null;
 
 addExerciseBtn.addEventListener("click", () => {
@@ -12,21 +13,24 @@ addExerciseBtn.addEventListener("click", () => {
         <button type="button" class="add-set-btn">+ Add Set</button>
         <hr>
     `;
-    const addSetBtn = exerciseDiv.querySelector(".add-set-btn");
     const setsCont = exerciseDiv.querySelector(".sets-container");
-    
-    addSetBtn.addEventListener("click", () => {
+    const addSet = (weight = "", reps = "") => {
         const setDiv = document.createElement("div");
         setDiv.classList.add("set");
         setDiv.innerHTML = `
-            <label>Weight: <input type="number" class="set-weight" required></label>
-            <label>Reps: <input type="number" class="set-reps" required></label>
+            <label>Weight: <input type="number" class="set-weight" required value="${weight}"></label>
+            <label>Reps: <input type="number" class="set-reps" required value="${reps}"></label>
+            <button type="button" class="remove-set-btn">Remove Set</button>
         `;
+        setDiv.querySelector(".remove-set-btn").addEventListener("click", () => {
+            setDiv.remove();
+        });
         setsCont.appendChild(setDiv);
-    });
-
-    addSetBtn.click();
+    };
+    addSet();
+    exerciseDiv.querySelector(".add-set-btn").addEventListener("click", () => addSet());
     exercisesCont.appendChild(exerciseDiv);
+    
 });
 
 workoutForm.addEventListener("submit", async (e) => {
@@ -61,6 +65,8 @@ workoutForm.addEventListener("submit", async (e) => {
         workoutForm.reset();
         exercisesCont.innerHTML = "";
         editingWorkoutId = null;
+        cancelEdit.style.display ="none";
+        document.querySelector("h1").textContent = "Log Workout";
         populateExerciseDropdown();
         loadWorkouts();
     } catch (err) {
@@ -68,6 +74,14 @@ workoutForm.addEventListener("submit", async (e) => {
         alert("Error occured, check console");
     }
 });
+
+cancelEdit.addEventListener("click", () => {
+    workoutForm.reset();
+    exercisesCont.innerHTML = "";
+    editingWorkoutId = null;
+    cancelEdit.style.display = "none";
+    document.querySelector("h1").textContent = "Log Workout";
+})
 
 async function populateExerciseDropdown() {
     const dropdown = document.getElementById("exercise-search");
@@ -192,6 +206,8 @@ function loadWorkoutForm(id, workout) {
     document.getElementById("workout-day").value = workout.workout_day;
     exercisesCont.innerHTML = "";
     editingWorkoutId = id;
+    document.querySelector("h1").textContent = "Edit Workout";
+    cancelEdit.style.display = "inline";
     Object.entries(workout.exercises).forEach(([name, sets]) => {
         const exerciseDiv = document.createElement("div");
         exerciseDiv.classList.add("exercise");
@@ -210,7 +226,11 @@ function loadWorkoutForm(id, workout) {
             setDiv.innerHTML = `
                 <label>Weight: <input type="number" class="set-weight" required value="${set.weight}"></label>
                 <label>Reps: <input type="number" class="set-reps" required value ="${set.reps}"></label>
+                <button type="button" class="remove-set-btn">Remove Set</button>
             `;
+            setDiv.querySelector(".remove-set-btn").addEventListener("click", () => {
+                setDiv.remove();
+            });
             setsCont.appendChild(setDiv);
         });
         const addSetBtn = exerciseDiv.querySelector(".add-set-btn");
@@ -220,7 +240,11 @@ function loadWorkoutForm(id, workout) {
             setDiv.innerHTML = `
                 <label>Weight: <input type="number" class="set-weight" required></label>
                 <label>Reps: <input type="number" class="set-reps" required></label>
+                <button type="button" class="remove-set-btn">Remove Set</button>
             `;
+            setDiv.querySelector(".remove-set-btn").addEventListener("click", () => {
+                setDiv.remove();
+            });
             setsCont.appendChild(setDiv);
         });
         exercisesCont.appendChild(exerciseDiv);
