@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Workout Log</title>
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="styles.css" />
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
@@ -26,7 +26,9 @@
                 <option value="" disabled selected>Select an exercise</option>
             </select>
             <button type="button" id="fetch-progress">Show Progress</button>
-            <canvas id="progress-chart" width="600" height="300"></canvas>
+            <div id="chart-container">
+                <canvas id="progress-chart"></canvas>
+            </div>
         </div>
         <hr>
         <h2>Workout History</h2>

@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+h1, h2, h4 {
+    margin-bottom: 10px;
+}
+
+form, #progress-section, #workout-history {
+    background: white;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+input[type="text"], input[type="number"], select {
+    padding: 6px;
+    margin: 4px 0;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+button {
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button.delete-btn {
+    background-color: #dc3545;
+}
+
+button.edit-btn {
+    background-color: #ffc107;
+    color: black;
+}
+
+button#cancel-edit {
+    background-color: #6c757d;
+}
+
+button#cancel-edit:hover {
+    background-color: #5a6268;
+}
+
+.workout-entry {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+#chart-container {
+    max-width: 600px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+#progress-chart {
+    width: 100% !important;
+    height: auto !important;
+}
