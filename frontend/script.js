@@ -5,14 +5,29 @@ const cancelEdit = document.getElementById("cancel-edit");
 let editingWorkoutId = null;
 
 addExerciseBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("exercise-wrapper");
+    const header = document.createElement("div");
+    header.classList.add("exercise-header");
+    header.innerHTML = `
+        <span>New Exercise</span>
+        <button type="button" class="toggle-exercise">–</button>
+    `;
     const exerciseDiv = document.createElement("div");
     exerciseDiv.classList.add("exercise");
     exerciseDiv.innerHTML = `
         <label>Exercise Name: <input type="text" class="exercise-name" list="exercise-list" required></label>
         <div class="sets-container"></div>
         <button type="button" class="add-set-btn">+ Add Set</button>
+        <button type="button" class="remove-exercise-btn">Remove Exercise</button>
         <hr>
     `;
+    header.querySelector(".toggle-exercise").addEventListener("click", () => {
+        exerciseDiv.classList.toggle("collapsed");
+    });
+    exerciseDiv.querySelector(".remove-exercise-btn").addEventListener("click", () => {
+        wrapper.remove();
+    });
     const setsCont = exerciseDiv.querySelector(".sets-container");
     const addSet = (weight = "", reps = "") => {
         const setDiv = document.createElement("div");
@@ -22,19 +37,20 @@ addExerciseBtn.addEventListener("click", () => {
             <label>Reps: <input type="number" class="set-reps" required value="${reps}"></label>
             <button type="button" class="remove-set-btn">Remove Set</button>
         `;
-        setDiv.querySelector(".remove-set-btn").addEventListener("click", () => {
-            setDiv.remove();
-        });
+        setDiv.querySelector(".remove-set-btn").addEventListener("click", () => setDiv.remove());
         setsCont.appendChild(setDiv);
     };
     addSet();
     exerciseDiv.querySelector(".add-set-btn").addEventListener("click", () => addSet());
-    exercisesCont.appendChild(exerciseDiv);
-    
+    wrapper.appendChild(header);
+    wrapper.appendChild(exerciseDiv);
+    exercisesCont.appendChild(wrapper);
 });
+
 
 workoutForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const date = document.getElementById("workout-date").value;
     const day = document.getElementById("workout-day").value;
     const exercises = [];
     document.querySelectorAll(".exercise").forEach(exerciseEle => {
@@ -47,7 +63,7 @@ workoutForm.addEventListener("submit", async (e) => {
         });
         exercises.push({exercise_name: name, sets});
     });
-    const payload = {workout_day: day, exercises: exercises};
+    const payload = {workout_day: day, date: date, exercises: exercises};
     const url = editingWorkoutId
         ? `http://127.0.0.1:5000/workouts/${editingWorkoutId}`
         : "http://127.0.0.1:5000/workouts";
@@ -160,13 +176,31 @@ async function loadWorkouts() {
         data.forEach((workout, index) => {
             const indWorkout = document.createElement("div");
             indWorkout.classList.add("workout-entry");
-            const date = new Date(workout.date).toLocaleDateString();
+            let date = "Unknown Date";
+            console.log("RAW workout.date:", workout.date);
+            if (workout.date) {
+                const dateActual = workout.date.slice(0,10);
+                const dateObj = new Date(`${dateActual}T00:00:00`);
+                date = dateObj.toLocaleDateString("en-US", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                });
+            } 
             indWorkout.innerHTML = `
             <h4>${workout.workout_day} (${date})</h4>
             <ul>
-                ${Object.entries(workout.exercises).map(([name, sets]) => `
-                    <li><strong>${name}</strong>: ${sets.map(set => `${set.weight} x ${set.reps}`).join(", ")}</li>
-                `).join("")}
+                ${
+                    (Array.isArray(workout.exercises) 
+                    ? workout.exercises 
+                    : Object.entries(workout.exercises).map(([exercise_name, sets]) => ({exercise_name, sets}))
+                    ).map(ex => 
+                        `<li class="exercise-entry">
+                            <strong>${ex.exercise_name}</strong>
+                            ${ex.sets.map(set => `<span>${set.weight} x ${set.reps}</span>`).join("")}
+                        </li>`
+                    ).join("")}
             </ul>
             <button data-id="${workout.id}" class="edit-btn">Edit Workout</button>
             <button data-id="${workout.id}" class="delete-btn">Delete Workout</button>
@@ -204,51 +238,67 @@ async function loadWorkouts() {
 
 function loadWorkoutForm(id, workout) {
     document.getElementById("workout-day").value = workout.workout_day;
+    document.getElementById("workout-date").value = workout.date;
     exercisesCont.innerHTML = "";
     editingWorkoutId = id;
     document.querySelector("h1").textContent = "Edit Workout";
     cancelEdit.style.display = "inline";
-    Object.entries(workout.exercises).forEach(([name, sets]) => {
-        const exerciseDiv = document.createElement("div");
-        exerciseDiv.classList.add("exercise");
-        exerciseDiv.innerHTML = `
-            <label>Exercise Name:
-                <input type="text" class="exercise-name" list="exercise-list" required value="${name}">
-            </label>
-            <div class="sets-container"></div>
-            <button type="button" class="add-set-btn">+ Add Set</button>
-            <hr>
-        `;
-        const setsCont = exerciseDiv.querySelector(".sets-container");
-        sets.forEach(set => {
-            const setDiv = document.createElement("div");
-            setDiv.classList.add("set");
-            setDiv.innerHTML = `
-                <label>Weight: <input type="number" class="set-weight" required value="${set.weight}"></label>
-                <label>Reps: <input type="number" class="set-reps" required value ="${set.reps}"></label>
-                <button type="button" class="remove-set-btn">Remove Set</button>
+    const exerciseList = Array.isArray(workout.exercises)
+        ? workout.exercises
+        : Object.entries(workout.exercises).map(([exercise_name, sets]) => ({exercise_name, sets}));
+        exerciseList.forEach(({ exercise_name, sets }) => {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("exercise-wrapper");
+            const header = document.createElement("div");
+            header.classList.add("exercise-header");
+            header.innerHTML = `
+                <span>${exercise_name}</span>
+                <button type="button" class="toggle-exercise">–</button>
             `;
-            setDiv.querySelector(".remove-set-btn").addEventListener("click", () => {
-                setDiv.remove();
-            });
-            setsCont.appendChild(setDiv);
-        });
-        const addSetBtn = exerciseDiv.querySelector(".add-set-btn");
-        addSetBtn.addEventListener("click", () => {
-            const setDiv = document.createElement("div");
-            setDiv.classList.add("set");
-            setDiv.innerHTML = `
-                <label>Weight: <input type="number" class="set-weight" required></label>
-                <label>Reps: <input type="number" class="set-reps" required></label>
-                <button type="button" class="remove-set-btn">Remove Set</button>
+            const exerciseDiv = document.createElement("div");
+            exerciseDiv.classList.add("exercise");
+            exerciseDiv.innerHTML = `
+                <label>Exercise Name:
+                    <input type="text" class="exercise-name" list="exercise-list" required value="${exercise_name}">
+                </label>
+                <div class="sets-container"></div>
+                <button type="button" class="add-set-btn">+ Add Set</button>
+                <button type="button" class="remove-exercise-btn">Remove Exercise</button>
+                <hr>
             `;
-            setDiv.querySelector(".remove-set-btn").addEventListener("click", () => {
-                setDiv.remove();
+            header.querySelector(".toggle-exercise").addEventListener("click", () => {
+                exerciseDiv.classList.toggle("collapsed");
             });
-            setsCont.appendChild(setDiv);
+            exerciseDiv.querySelector(".remove-exercise-btn").addEventListener("click", () => {
+                wrapper.remove();
+            });
+            const setsCont = exerciseDiv.querySelector(".sets-container");
+            sets.forEach(set => {
+                const setDiv = document.createElement("div");
+                setDiv.classList.add("set");
+                setDiv.innerHTML = `
+                    <label>Weight: <input type="number" class="set-weight" required value="${set.weight}"></label>
+                    <label>Reps: <input type="number" class="set-reps" required value="${set.reps}"></label>
+                    <button type="button" class="remove-set-btn">Remove Set</button>
+                `;
+                setDiv.querySelector(".remove-set-btn").addEventListener("click", () => setDiv.remove());
+                setsCont.appendChild(setDiv);
+            });
+            exerciseDiv.querySelector(".add-set-btn").addEventListener("click", () => {
+                const setDiv = document.createElement("div");
+                setDiv.classList.add("set");
+                setDiv.innerHTML = `
+                    <label>Weight: <input type="number" class="set-weight" required></label>
+                    <label>Reps: <input type="number" class="set-reps" required></label>
+                    <button type="button" class="remove-set-btn">Remove Set</button>
+                `;
+                setDiv.querySelector(".remove-set-btn").addEventListener("click", () => setDiv.remove());
+                setsCont.appendChild(setDiv);
+            });
+            wrapper.appendChild(header);
+            wrapper.appendChild(exerciseDiv);
+            exercisesCont.appendChild(wrapper);
         });
-        exercisesCont.appendChild(exerciseDiv);
-    });
     workoutForm.scrollIntoView({behavior: "smooth"});
 }
 

@@ -2,33 +2,62 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
     padding: 0;
-    background-color: #f8f9fa;
+    background-color: #f2f4f6;
     color: #333;
 }
 
-h1, h2, h4 {
-    margin-bottom: 10px;
-}
-
-form, #progress-section, #workout-history {
-    background: white;
+.container {
+    max-width: 900px;
+    margin: 0 auto;
     padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
-input[type="text"], input[type="number"], select {
-    padding: 6px;
-    margin: 4px 0;
-    width: 100%;
-    max-width: 300px;
-    box-sizing: border-box;
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #2c3e50;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 6px;
+    color: #34495e;
+}
+
+h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+form,
+#progress-section,
+#workout-history {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.05);
 }
 
 label {
     display: block;
     margin-top: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+    padding: 6px;
+    margin: 4px 0;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
 }
 
 button {
@@ -40,10 +69,12 @@ button {
     background-color: #007bff;
     color: white;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: translateY(-1px);
 }
 
 button.delete-btn {
@@ -64,9 +95,42 @@ button#cancel-edit:hover {
 }
 
 .workout-entry {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 15px;
     margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ccc;
+    background-color: #fafafa;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.workout-entry:hover {
+    background-color: #f1f5fb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.exercise-entry {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f0f2f5;
+    border-left: 4px solid #007bff;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.exercise-entry:hover {
+    background-color: #e9f0fb;
+}
+
+.exercise-entry strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.exercise-entry span {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 0.9rem;
 }
 
 #chart-container {
@@ -82,4 +146,66 @@ button#cancel-edit:hover {
 #progress-chart {
     width: 100% !important;
     height: auto !important;
+}
+
+.collapsible-header {
+    background-color: #e0eafc;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.collapsible-header:hover {
+    background-color: #d0e0f5;
+}
+
+.collapsible-content {
+    display: none;
+    padding: 10px;
+    border-left: 3px solid #007bff;
+    background-color: #f9f9f9;
+    border-radius: 0 0 6px 6px;
+    margin-bottom: 15px;
+}
+
+.collapsible-content.show {
+    display: block;
+}
+
+hr {
+    margin: 30px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    button {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    button.edit-btn,
+    button.delete-btn {
+        width: 48%;
+        display: inline-block;
+    }
+
+    .exercise-entry span {
+        display: block;
+        margin-bottom: 4px;
+    }
+}
+
+.exercise.collapsed {
+    display: none;
 }

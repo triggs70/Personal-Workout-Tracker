@@ -27,10 +27,10 @@ def init_db():
     cursor.close()
     conn.close()
 
-def add_workout(workout_day, exercises):
+def add_workout(workout_day, date, exercises):
     conn = connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO workouts (workout_day, date) VALUES (%s, CURDATE())", (workout_day,))
+    cursor.execute("INSERT INTO workouts (workout_day, date) VALUES (%s, %s)", (workout_day, date))
     workout_id = cursor.lastrowid
     for exercise in exercises:
         exercise_name = exercise["exercise_name"]
@@ -54,7 +54,7 @@ def get_workouts():
         FROM workouts w
         LEFT JOIN exercises e ON w.id = e.workout_id
         LEFT JOIN sets s ON e.id = s.exercise_id
-        ORDER BY w.date DESC
+        ORDER BY w.date DESC, e.id ASC, s.id ASC
     """)
     data = cursor.fetchall()
     conn.close()
@@ -65,14 +65,20 @@ def get_workouts():
             workouts[workout_id] = {
                 "id": workout_id,
                 "workout_day": row["workout_day"],
-                "date": row["date"],
-                "exercises": {}
+                "date": row["date"].strftime("%Y-%m-%d"),
+                "exercises": []
             }
-        exercise_name = row["exercise_name"]
-        if exercise_name not in workouts[workout_id]["exercises"]:
-            workouts[workout_id]["exercises"][exercise_name] = []
+        exercise_list = workouts[workout_id]["exercises"]
+        if not exercise_list or exercise_list[-1]["exercise_name"] != row["exercise_name"]:
+            exercise_list.append({
+                "exercise_name": row["exercise_name"],
+                "sets": []
+            })
         if row["weight"] and row["reps"]:
-            workouts[workout_id]["exercises"][exercise_name].append({"weight": row["weight"], "reps": row["reps"]})
+            exercise_list[-1]["sets"].append({
+                "weight": row["weight"],
+                "reps": row["reps"]
+            })
     return list(workouts.values())
 
 def get_progress(exercise_name):
@@ -96,10 +102,10 @@ def get_progress(exercise_name):
     conn.close()
     return [{"date": row["date"], "weight": row["weight"], "reps": row["reps"]} for row in data]
 
-def update_workout_db(workout_id, workout_day, exercises):
+def update_workout_db(workout_id, workout_day, date, exercises):
     conn = connect()
     cursor = conn.cursor()
-    cursor.execute("UPDATE workouts SET workout_day = %s WHERE id = %s", (workout_day, workout_id))
+    cursor.execute("UPDATE workouts SET workout_day = %s, date = %s WHERE id = %s", (workout_day, date, workout_id))
     cursor.execute("DELETE FROM sets WHERE exercise_id IN (SELECT id FROM exercises WHERE workout_id = %s)", (workout_id,))
     cursor.execute("DELETE FROM exercises WHERE workout_id = %s", (workout_id,))
     for exercise in exercises:

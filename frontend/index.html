@@ -8,31 +8,34 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
-        <h1>Log Workout</h1>
-        <form id="workout-form">
-            <label for="workout-day">Workout Day:</label>
-            <input type="text" id="workout-day" name="workout-day" required />
-            <div id="exercises-container"></div>
-            <button type="button" id="add-exercise">+ Add Exercise</button>
-            <button type="submit">Log Workout</button>
-            <button type="button" id="cancel-edit" style="display: none;">Cancel Edit</button>
-        </form>
-        <datalist id="exercise-list"></datalist>
-        <hr>
-        <h2>Progress Tracker</h2>
-        <div id="progress-section">
-            <label for="exercise-search">Exercise Name:</label>
-            <select id="exercise-search">
-                <option value="" disabled selected>Select an exercise</option>
-            </select>
-            <button type="button" id="fetch-progress">Show Progress</button>
-            <div id="chart-container">
-                <canvas id="progress-chart"></canvas>
+        <div class="container">
+            <h1>Log Workout</h1>
+            <form id="workout-form">
+                <label for="workout-day">Workout Day:</label>
+                <input type="date" id="workout-date" name="workout-date" required />
+                <input type="text" id="workout-day" name="workout-day" required />
+                <div id="exercises-container"></div>
+                <button type="button" id="add-exercise">+ Add Exercise</button>
+                <button type="submit">Log Workout</button>
+                <button type="button" id="cancel-edit" style="display: none;">Cancel Edit</button>
+            </form>
+            <datalist id="exercise-list"></datalist>
+            <hr>
+            <h2>Progress Tracker</h2>
+            <div id="progress-section">
+                <label for="exercise-search">Exercise Name:</label>
+                <select id="exercise-search">
+                    <option value="" disabled selected>Select an exercise</option>
+                </select>
+                <button type="button" id="fetch-progress">Show Progress</button>
+                <div id="chart-container">
+                    <canvas id="progress-chart"></canvas>
+                </div>
             </div>
+            <hr>
+            <h2>Workout History</h2>
+            <div id="workout-history"></div>
+            <script src="script.js"></script>
         </div>
-        <hr>
-        <h2>Workout History</h2>
-        <div id="workout-history"></div>
-        <script src="script.js"></script>
     </body>
 </html>

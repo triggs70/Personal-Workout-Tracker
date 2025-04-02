@@ -12,13 +12,14 @@ def home():
 @app.route("/workouts", methods=["POST"])
 def log_workout():
     data = request.json
-    if not all(k in data for k in ["workout_day", "exercises"]):
+    if not all(k in data for k in ["workout_day", "exercises", "date"]):
         return jsonify({"error": "Missing required fields"}), 400
 
     workout_day = data["workout_day"]
+    date = data["date"]
     exercises = data["exercises"]
     try:
-        add_workout(workout_day, exercises)
+        add_workout(workout_day, date, exercises)
         return jsonify({"message": "Workout logged"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -37,9 +38,10 @@ def update_workout(workout_id):
     if not all (k in data for k in ["workout_day", "exercises"]):
         return jsonify({"error": "Missing required fields"}), 400
     workout_day = data["workout_day"]
+    date = data["date"]
     exercises = data["exercises"]
     try:
-        update_workout_db(workout_id, workout_day, exercises)
+        update_workout_db(workout_id, workout_day, date, exercises)
         return jsonify({"message": "Workout updated"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
