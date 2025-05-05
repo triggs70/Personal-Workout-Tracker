@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from database import connect, add_workout, get_workouts, get_progress, update_workout_db, delete_workout_db
+from backend.database import connect, add_workout, get_workouts, get_progress, update_workout_db, delete_workout_db
 import os
 
 app = Flask(__name__)
