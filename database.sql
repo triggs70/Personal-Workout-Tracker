@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS workout_tracker;
-USE workout_tracker;
-
 
 CREATE TABLE IF NOT EXISTS workouts (
 	id INT AUTO_INCREMENT PRIMARY KEY,

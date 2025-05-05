@@ -1,13 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from database import connect, add_workout, get_workouts, get_progress, update_workout_db, delete_workout_db
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/", methods=["GET"])
-def home():
-    return jsonify({"message": "Welcome to workout tracker api"})
+
+@app.route('/')
+def serve_index():
+    return send_from_directory('../frontend', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static_file(path):
+    return send_from_directory('../frontend', path)
 
 @app.route("/workouts", methods=["POST"])
 def log_workout():
@@ -70,6 +76,8 @@ def get_exercise_names():
     result = [row[0] for row in cursor.fetchall()]
     conn.close()
     return jsonify(result)
+
+
 
 if __name__=="__main__":
     app.run(debug=True)

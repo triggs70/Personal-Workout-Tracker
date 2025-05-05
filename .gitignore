@@ -1,6 +1,8 @@
-backend/data/
-
-backend/.env
-
-__pychache__/
+__pycache__/
 *.pyc
+dist/
+build/
+*.spec
+*.sqlite3
+*.db
+.DS_Store
